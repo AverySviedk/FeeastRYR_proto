@@ -34,14 +34,9 @@
                                     "AND rri.idRenta = ? " +
                                     "ORDER BY cantItem DESC";                
                 statement = connection.prepareStatement(sql);
-                statement.setInt(1, Integer.parseInt(idRenta));  // Asignar el idRenta (en este caso, 1)
+                statement.setInt(1, Integer.parseInt(idRenta));  
                 resultSet = statement.executeQuery();
 
-
-                //AHORA QUE TIENES EL RESULT SWET SE DEBEN MOSTRAR LOS RESULTADOS
-                //DE LOS DETALLES D ELOS PRODUCTOS
-                
-                
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

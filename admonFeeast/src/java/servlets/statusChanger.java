@@ -73,8 +73,41 @@ public class statusChanger extends HttpServlet {
             insertTipoItem(request, response);
         }else if (modo.equals("delItem")){  //ELIMINA UN ITEM
             deleteItem(request, response);
+        }else if (modo.equals("setCompen")){
+            setCompensacion(request, response);
         }else if (modo.equals("signOut")){
             signOut(request, response);
+        }
+    }
+    
+    private void setCompensacion(HttpServletRequest request, HttpServletResponse response){
+        Connection connection = null;
+        String idRenta = request.getParameter("idRenta");
+        String cantComp = request.getParameter("cantComp");
+
+        try {
+            Connectorizer connect = new Connectorizer();
+            connection = connect.conectar();
+
+            //String sql = "SELECT * FROM cliente WHERE correo = ? AND password = ?";
+            String sql = "UPDATE renta SET compensacion = ? WHERE idRenta = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, Integer.parseInt(cantComp));  // Asignar el valor deseado para "compensacion"
+            statement.setInt(2, Integer.parseInt(idRenta));  // Asignar el idRenta (en este caso, 1)
+            int rowsUpdated = statement.executeUpdate();
+            
+            response.sendRedirect(request.getContextPath() + "/admin/rentasAdmin.jsp");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close(); // Cerrar la conexión
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
     
@@ -167,7 +200,7 @@ public class statusChanger extends HttpServlet {
             statement.setInt(3, Integer.parseInt(idRenta));
             int rowsUpdated = statement.executeUpdate();
             
-            response.sendRedirect(request.getContextPath() + "/clientes/miHistorial.jsp");
+            response.sendRedirect(request.getContextPath() + "/clientes/misRentas.jsp");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

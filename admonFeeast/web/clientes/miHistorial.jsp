@@ -27,53 +27,48 @@
             try {
                 Connectorizer connect = new Connectorizer();
                 connection = connect.conectar();
-
-                //String sql = "SELECT * FROM renta ORDER BY fechaHoraRenta ASC";
-                //"SELECT * FROM renta WHERE estado = 'Pendiente' OR estado = 'Aceptado' ORDER BY fechaHoraRenta ASC";
-                /*
-                String sql = "SELECT idRenta, fecha, hora, precio, compensacion, estado "
-                            + "FROM renta WHERE estado = 'Pendiente' or estado = 'Aceptado' "
-                            + "ORDER BY fecha ASC, hora ASC";*/
                 
-                out.println("<p>" + userId + "</p>");
+                ServletContext context = request.getServletContext();
+                context.log( "User ID: " + userId );
                 
                 String sql = "SELECT idRenta, fecha AS Fecha, " +
                              "hora AS Hora, precio AS Precio, estado AS Estado, comentario AS Comentario " +
                              "FROM renta r " +
                              "WHERE (Estado = 'Terminado' or Estado = 'Rechazado') AND r.idCliente = ? " +
-                             "ORDER BY Fecha ASC, Hora ASC";
+                             "ORDER BY r.estado DESC, Fecha ASC, Hora ASC";
                 
                 statement = connection.prepareStatement(sql);
                 statement.setString(1, userId);
                 resultSet = statement.executeQuery();
+                boolean barelyResult = resultSet.next();
+                resultSet = statement.executeQuery();
                 
+                context.log("Consulta ejecutada: " + sql + "");                
                 if (resultSet.isBeforeFirst()) {
-                    out.println("<p>Se encontraron datos</p>");
+                    context.log("Se encontraron datos");
                 } else {
-                    out.println("<p>No se encontraron datos</p>");
+                    context.log("No se encontraron datos");
                 }
-                
-                out.println("<p>Consulta ejecutada: " + sql + "</p>");
-               
-
                 
                 // Obtener nombres de columnas
                 ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();
-                
-                out.println("<p>cuenta: " + resultSet.getRow() + "</p>");
+                int columnCount = metaData.getColumnCount(); 
 
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnLabel(i);%>
-                    <th><%= columnName %></th>
-             <% } %>
+                if (barelyResult){
+                    for (int i = 2; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnLabel(i);%>
+                        <th><%= columnName %></th>
+              <%    }
+                }else{%>
+                    <th>No tienes rentas en el historial.</th>
+              <%}%>
             </tr>
         </thead>
         <tbody> <!-- Aquí se agregarán las filas dinámicamente -->
             <%  while (resultSet.next()) { 
                     String idRenta = resultSet.getObject(1).toString();%>
                     <tr>
-                    <%  for (int i = 1; i <= columnCount; i++) { %>
+                    <%  for (int i = 2; i <= columnCount; i++) { %>
                             <td><%= (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - " %></td>
                     <%  } %>
                         <td>
@@ -91,6 +86,6 @@
         </tbody>
         </table>        
         <br><br><br>
-        <input type="button" value="Ver Historial" onclick="window.location.href='<%=request.getContextPath()%>/clientes/misRentas.jsp'">
+        <input type="button" value="Regresar" onclick="window.location.href='<%=request.getContextPath()%>/clientes/misRentas.jsp'">
     </body>
 </html>

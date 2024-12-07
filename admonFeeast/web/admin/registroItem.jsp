@@ -29,21 +29,19 @@
             Connectorizer connect = new Connectorizer();
             connection = connect.conectar();
 
-            out.println("<p>" + userId + "</p>");
+            ServletContext context = request.getServletContext();
+            context.log( "User ID: " + userId );
 
             String sql = "SELECT * FROM tipoitem";
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
 
+            context.log("Consulta ejecutada: " + sql + "");
             if (resultSet.isBeforeFirst()) {
-                out.println("<p>Se encontraron datos</p>");
+                context.log("Se encontraron datos");
             } else {
-                out.println("<p>No se encontraron datos</p>");
+                context.log("No se encontraron datos");
             }
-
-            out.println("<p>Consulta ejecutada: " + sql + "</p>");
-
-            out.println("<p>cuenta: " + resultSet.getRow() + "</p>");
       %>
       <form name="formItem" method="post" onsubmit="return preventType(event)" action="<%=request.getContextPath()%>/statusChanger?modo=instItem&dimenItem=false">
             <table>

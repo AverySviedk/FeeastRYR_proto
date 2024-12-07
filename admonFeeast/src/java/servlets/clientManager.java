@@ -83,16 +83,57 @@ public class clientManager extends HttpServlet {
         }
     }
     
+    private boolean existingName(String username){
+        Connection connection = null;
+
+        try {
+            Connectorizer connect = new Connectorizer();
+            connection = connect.conectar();
+
+            String sql = "SELECT CASE WHEN (SELECT count(*) FROM cliente WHERE username = ?) > 0 " +
+                                "THEN 'true' ELSE 'false' END AS existe"; 
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            
+            if (resultSet.next()) {
+                return Boolean.parseBoolean(resultSet.getObject(1).toString()) ; 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close(); // Cerrar la conexión
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+    
     private void signIn(HttpServletRequest request, HttpServletResponse response){
         String nombre = request.getParameter("nombre");
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String curp = request.getParameter("curp");
         String password = request.getParameter("password");
+        boolean nameProof = existingName(username);
+        
+        if (nameProof){
+            try {
+                response.sendRedirect("login.html?found=" + String.valueOf(nameProof)); 
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                return;
+            }
+        }
         
         HttpSession session = request.getSession();
         Connection connection = null;
-
+        
         try {
             Connectorizer connect = new Connectorizer();
             connection = connect.conectar();
@@ -127,8 +168,6 @@ public class clientManager extends HttpServlet {
                 }
             }
         }
-        
-        
     }
 
     private void logIn(HttpServletRequest request, HttpServletResponse response){
@@ -154,6 +193,11 @@ public class clientManager extends HttpServlet {
                 session.setAttribute("username", username);
                 session.setAttribute("password", password);
                 
+                //Cabecera para no guardar 
+                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+                response.setHeader("Pragma", "no-cache");
+                response.setDateHeader("Expires", 0);
+                
                 // Verificar si el usuario es admin
                 if (idClient.equals("1")) {
                     response.sendRedirect("admin/rentasAdmin.jsp"); // Redirigir a admin
@@ -161,7 +205,7 @@ public class clientManager extends HttpServlet {
                     response.sendRedirect("clientes/misRentas.jsp"); // Redirigir a usuario normal
                 }
             } else {
-                response.sendRedirect("notFound.jsp?error=Usuario no encontrado o contraseña incorrecta"); // Redirigir a error
+                response.sendRedirect("login.html"); // Redirigir a error
             }
         } catch (Exception e) {
             e.printStackTrace();

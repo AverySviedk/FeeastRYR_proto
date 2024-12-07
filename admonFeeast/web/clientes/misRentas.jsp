@@ -27,60 +27,60 @@
             try {
                 Connectorizer connect = new Connectorizer();
                 connection = connect.conectar();
-
-                //String sql = "SELECT * FROM renta ORDER BY fechaHoraRenta ASC";
-                //"SELECT * FROM renta WHERE estado = 'Pendiente' OR estado = 'Aceptado' ORDER BY fechaHoraRenta ASC";
-                /*
-                String sql = "SELECT idRenta, fecha, hora, precio, compensacion, estado "
-                            + "FROM renta WHERE estado = 'Pendiente' or estado = 'Aceptado' "
-                            + "ORDER BY fecha ASC, hora ASC";*/
                 
-                String sql = "SELECT idRenta, fecha AS Fecha, " +
-                             "hora AS Hora, precio AS Precio, estado AS Estado " +
-                             "FROM renta r " +
-                             "WHERE (Estado = 'Pendiente' or Estado = 'Aceptado') AND r.idCliente = ? " +
-                             "ORDER BY Fecha ASC, Hora ASC";
+                String sql = "SELECT idRenta, fecha AS Fecha, hora AS Hora, precio AS Precio, estado AS Estado, " +
+                                    "CASE WHEN fecha > CURRENT_DATE() " +
+                                         "OR (fecha = CURRENT_DATE() AND hora < '9:00:00') THEN 'cancelable' " +
+                                         "ELSE 'expirada' " +
+                                    "END AS cancelabilidad FROM renta r  " + 
+                                "WHERE (estado = 'Pendiente' or estado = 'Aceptado') AND r.idCliente = ? " +  
+                                "ORDER r.estado ASC, BY Fecha ASC, Hora ASC";
                 
                 statement = connection.prepareStatement(sql);
                 statement.setString(1, userId);
                 resultSet = statement.executeQuery();
+                boolean barelyResult = resultSet.next();
+                resultSet = statement.executeQuery();
                 
+                ServletContext context = request.getServletContext();
+                context.log("Consulta ejecutada: " + sql + "");                
                 if (resultSet.isBeforeFirst()) {
-                    out.println("<p>Se encontraron datos</p>");
+                    context.log("Se encontraron datos");
                 } else {
-                    out.println("<p>No se encontraron datos</p>");
+                    context.log("No se encontraron datos");
                 }
-                
-                out.println("<p>Consulta ejecutada: " + sql + "</p>");
-               
-
                 
                 // Obtener nombres de columnas
                 ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();
+                int columnCount = metaData.getColumnCount(); 
                 
-                out.println("<p>cuenta: " + resultSet.getRow() + "</p>");
-
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnLabel(i);%>
-                    <th><%= columnName %></th>
-             <% } %>
+                if (barelyResult){
+                    for (int i = 2; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnLabel(i);%>
+                        <th><%= columnName %></th>
+              <%    }
+                }else{%>
+                    <th>No tienes rentas pendientes.</th>
+              <%}%>
             </tr>
         </thead>
         <tbody> <!-- Aquí se agregarán las filas dinámicamente -->
             <%  while (resultSet.next()) {
-                    String idRenta = resultSet.getObject(1).toString();%>
+                    String idRenta = resultSet.getObject(1).toString();
+                    String cancelailidad = resultSet.getObject(columnCount).toString();%>
                     <tr>
-                    <%  for (int i = 1; i <= columnCount; i++) { %>
+                    <%  for (int i = 2; i <= columnCount - 1; i++) { %>
                             <td><%= (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - " %></td>
                     <%  } %>
                         <td>
                             <a href="/detallesRenta.jsp?idRenta=<%=idRenta%>">Ver Detalles</a>
                         </td>
+                      <%if (cancelailidad.equals("cancelable")){%>
                         <td>
                             <input type="button" value="Cancelar" 
                                    onclick="window.location.href='<%=request.getContextPath()%>/statusChanger?modo=delRenta&idRenta=<%=idRenta%>&idUsr=<%=userId%>'">
                         </td>
+                      <%}%>
                     </tr>
             <%  }
             } catch (Exception e) {

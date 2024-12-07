@@ -31,50 +31,47 @@
                 Connectorizer connect = new Connectorizer();
                 connection = connect.conectar();
 
-                //String sql = "SELECT * FROM renta ORDER BY fechaHoraRenta ASC";
-                //"SELECT * FROM renta WHERE estado = 'Pendiente' OR estado = 'Aceptado' ORDER BY fechaHoraRenta ASC";
-                /*
-                String sql = "SELECT idRenta, fecha, hora, precio, compensacion, estado "
-                            + "FROM renta WHERE estado = 'Pendiente' or estado = 'Aceptado' "
-                            + "ORDER BY fecha ASC, hora ASC";*/
-                
-                String sql = "SELECT idRenta, nombreCliente AS Cliente, fecha AS Fecha, " +
-                             "hora AS Hora, precio AS Precio, compensacion AS Compensacion, estado AS Estado " +
-                             "FROM renta r INNER JOIN cliente c  " +
-                             "ON r.idCliente = c.idCliente " +
-                             "WHERE Estado = 'Pendiente' or Estado = 'Aceptado' " +
-                             "ORDER BY Fecha ASC, Hora ASC";
+                String sql = "SELECT idRenta, nombreCliente AS Cliente, " + 
+                             "CONCAT(direccion, ', ', ciudad, ', ', d.estado, '  C.P:', codigoPostal) AS Direccion, " + 
+                             "fecha AS Fecha, hora AS Hora, precio AS Precio, " + 
+			     "compensacion AS Compensacion, r.estado AS Estado " + 
+                             "FROM renta r INNER JOIN cliente c ON r.idCliente = c.idCliente " + 
+                             "INNER JOIN direccion d ON d.idDireccion = r.idDireccion " + 
+                             "WHERE r.estado = 'Pendiente' or r.estado = 'Aceptado' " + 
+                             "ORDER BY r.estado ASC, fecha ASC, hora ASC";
                 
                 statement = connection.prepareStatement(sql);
                 resultSet = statement.executeQuery();
+                boolean barelyResult = resultSet.next();
+                resultSet = statement.executeQuery();
                 
+                ServletContext context = request.getServletContext();
+                context.log("Consulta ejecutada: " + sql + "");                
                 if (resultSet.isBeforeFirst()) {
-                    out.println("<p>Se encontraron datos</p>");
+                    context.log("Se encontraron datos");
                 } else {
-                    out.println("<p>No se encontraron datos</p>");
+                    context.log("No se encontraron datos");
                 }
-                
-                out.println("<p>Consulta ejecutada: " + sql + "</p>");
-               
-
                 
                 // Obtener nombres de columnas
                 ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount();
+                int columnCount = metaData.getColumnCount(); 
                 
-                out.println("<p>cuenta: " + resultSet.getRow() + "</p>");
-
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnLabel(i);%>
-                    <th><%= columnName %></th>
-             <% } %>
+                if (barelyResult){
+                    for (int i = 2; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnLabel(i);%>
+                        <th><%= columnName %></th>
+              <%    }
+                }else{%>
+                    <th>No tienes rentas por cumplir.</th>
+              <%}%>
             </tr>
         </thead>
         <tbody> <!-- Aquí se agregarán las filas dinámicamente -->
             <%  while (resultSet.next()) { 
                     String idRenta = resultSet.getObject(1).toString();%>
                     <tr>
-                    <%  for (int i = 1; i <= columnCount; i++) { %>
+                    <%  for (int i = 2; i <= columnCount; i++) { %>
                             <td><%= (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - " %></td>
                     <%  } %>
                         <td>
@@ -90,6 +87,32 @@
                     <%  } else if (resultSet.getObject(columnCount).equals("Aceptado")){%>
                             <input type="button" value="Finalizar" 
                                    onclick="window.location.href='<%=request.getContextPath()%>/statusChanger?modo=updEstado&idRenta=<%=idRenta%>&cambio=Terminado'"> 
+                            <input type="button" value="Compenzar" name="compen<%=idRenta%>" onclick="showCompText()"> 
+                            <input type="number" name="cantComp<%=idRenta%>" size="6" maxlength="6" hidden>
+                            <input type="button" value="Dar $" name="submitComp<%=idRenta%>" onclick="submitCompCant()" hidden>
+                            <script>
+                                function showCompText(){
+                                    let compen = document.getElementsByName("compen<%=idRenta%>")[0];
+                                    let cantComp = document.getElementsByName("cantComp<%=idRenta%>")[0];
+                                    let submitComp = document.getElementsByName("submitComp<%=idRenta%>")[0];
+                                    submitComp.hidden = !submitComp.hidden;
+                                    cantComp.hidden = !cantComp.hidden;
+                                    if (cantComp.hidden){
+                                        cantComp.value = "";
+                                        compen.value = "Compenzar";
+                                    }else{
+                                        compen.value = "Ocultar";
+                                    }
+                                }
+                                function submitCompCant(){
+                                    let cantComp = document.getElementsByName("cantComp<%=idRenta%>")[0];
+                                    if(cantComp.value != "") {
+                                        window.location.href = "<%=request.getContextPath()%>/statusChanger?modo=setCompen&idRenta=<%=idRenta%>&cantComp=" + cantComp.value;
+                                    }
+                                }
+                                
+                            </script>
+                            
                             <input type="button" value="Cancelar" 
                                    onclick="window.location.href='<%=request.getContextPath()%>/statusChanger?modo=updEstado&idRenta=<%=idRenta%>&cambio=Pendiente'"> 
                     <%  } %>

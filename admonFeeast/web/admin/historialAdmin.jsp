@@ -19,7 +19,7 @@
         }%>
     </head>
     <body>
-        <h1>Historial_Page</h1>
+        <h1>Historial Admin</h1>
         <table>
         <thead>
             <tr>
@@ -33,45 +33,46 @@
                 Connectorizer connect = new Connectorizer();
                 connection = connect.conectar();
 
-
-                String sql = "SELECT idRenta, nombreCliente AS Cliente, fecha AS Fecha, " +
-                             "hora AS Hora, precio AS Precio, compensacion AS Compensacion, estado AS Estado, comentario AS Comentario " +
-                             "FROM renta r INNER JOIN cliente c  " +
-                             "ON r.idCliente = c.idCliente " +
-                             "WHERE Estado = 'Terminado' or Estado = 'Rechazado' " +
-                             "ORDER BY Fecha ASC, Hora ASC";
+                String sql = "SELECT idRenta, nombreCliente AS Cliente, " + 
+                             "CONCAT(direccion, ', ', ciudad, ', ', d.estado, '  C.P:', codigoPostal) AS Direccion, " + 
+                             "fecha AS Fecha, hora AS Hora, precio AS Precio, " + 
+                             "compensacion AS Compensacion, r.estado AS Estado, comentario AS Comentario " + 
+                             "FROM renta r INNER JOIN cliente c ON r.idCliente = c.idCliente " + 
+                             "INNER JOIN direccion d ON d.idDireccion = r.idDireccion " + 
+                             "WHERE r.Estado = 'Terminado' or r.Estado = 'Rechazado' " + 
+                             "ORDER BY r.estado ASC, Fecha ASC, Hora ASC ";
                 
                 statement = connection.prepareStatement(sql);
                 resultSet = statement.executeQuery();
+                boolean barelyResult = resultSet.next();
+                resultSet = statement.executeQuery();
                 
-                
-                
+                ServletContext context = request.getServletContext();
+                context.log("Consulta ejecutada: " + sql + "");                
                 if (resultSet.isBeforeFirst()) {
-                    out.println("<p>Se encontraron datos</p>");
+                    context.log("Se encontraron datos");
                 } else {
-                    out.println("<p>No se encontraron datos</p>");
+                    context.log("No se encontraron datos");
                 }
-                
-                out.println("<p>Consulta ejecutada: " + sql + "</p>");
-                
-               
                 
                 // Obtener nombres de columnas
                 ResultSetMetaData metaData = resultSet.getMetaData();
-                int columnCount = metaData.getColumnCount(); // -1 Censura la columna Comentario
-
-                out.println("<p>cuenta: " + resultSet.getRow() + "</p>");
+                int columnCount = metaData.getColumnCount(); 
                 
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnLabel(i);%>
-                    <th><%= columnName %></th>
-             <% } %>
+                if (barelyResult){
+                    for (int i = 2; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnLabel(i);%>
+                        <th><%= columnName %></th>
+              <%    }
+                }else{%>
+                    <th>No tienes rentas por cumplir.</th>
+              <%}%>
             </tr>
         </thead>
         <tbody> <!-- Aquí se agregarán las filas dinámicamente -->
             <%  while (resultSet.next()) { %>
                     <tr>
-                    <%  for (int i = 1; i <= columnCount; i++) { %>
+                    <%  for (int i = 2; i <= columnCount; i++) { %>
                           <%String stringContent = (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - ";
                             if (metaData.getColumnName(i).toString().equals("comentario") 
                                 && stringContent.length() > 28) { %>

@@ -12,22 +12,20 @@
         <title>JSP Page</title>
         <%
             //HttpSession sesion = request.getSession(false);
-            String email = "", password = "";
+             String username = "", password = "";
             try{
-                email = session.getAttribute("username").toString();
-                password = session.getAttribute("password").toString();
+                username = session.getAttribute("username").toString();
             }catch(Exception e){
-                
+                username = "-";
             }
         %>
     </head>
     <body>
         <h1>
-            Usuario no encontrado
+            Usuario <%=username%> no encontrado
         </h1><br>
         <h3>
-            Email: <%=email%><br>
-            Password: <%=password%><br>
-        </h3>        
+            Lo sentimos :-(
+        </h3> 
     </body>
 </html>
