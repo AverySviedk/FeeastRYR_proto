@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import sourcer.Connectorizer;
 /**
@@ -63,24 +64,25 @@ public class statusChanger extends HttpServlet {
             throws ServletException, IOException {//processRequest(request, response);
         String modo = request.getParameter("modo");
         
-        if (modo.equals("updEstado")){     //CAMBIAR ESTADO DE RENTA
+        if (modo.equals("updEstado")){       //CAMBIA ESTADO DE RENTA
             updateEstado(request, response);
-        }else if (modo.equals("updComt")){ //ENVIAR UN COMENTARIO
+        }else if (modo.equals("updComt")){   //ENVIA UN COMENTARIO
             updateComent(request, response);
-        }else if (modo.equals("delRenta")){ //ELIMINAR UNA RENTA
+        }else if (modo.equals("delRenta")){  //ELIMINA UNA RENTA
             deleteRenta(request, response);
         }else if (modo.equals("instItemType")){ //INSERTA NUEVO TIPO ITEM
             insertTipoItem(request, response);
-        }else if (modo.equals("delItem")){  //ELIMINA UN ITEM
+        }else if (modo.equals("delItem")){   //ELIMINA UN ITEM
             deleteItem(request, response);
-        }else if (modo.equals("setCompen")){
+        }else if (modo.equals("setCompen")){ //DEFINE UNA COMPENSACION
             setCompensacion(request, response);
-        }else if (modo.equals("signOut")){
+        }else if (modo.equals("signOut")){   //ELIMINA LA SECION
             signOut(request, response);
         }
     }
     
     private void setCompensacion(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         Connection connection = null;
         String idRenta = request.getParameter("idRenta");
         String cantComp = request.getParameter("cantComp");
@@ -99,7 +101,7 @@ public class statusChanger extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/admin/rentasAdmin.jsp");
             
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {
@@ -112,16 +114,18 @@ public class statusChanger extends HttpServlet {
     }
     
     private void signOut(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         HttpSession session = request.getSession(false);
         session.invalidate();
         try{
             response.sendRedirect(request.getContextPath() + "/index.html");
         }catch(Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         }
     }
     
     private void deleteItem(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         Connection connection = null;
         String idItem = request.getParameter("idItem");
         
@@ -136,7 +140,7 @@ public class statusChanger extends HttpServlet {
             
             response.sendRedirect(request.getContextPath() + "/admin/seleccionItems.jsp");
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {
@@ -149,9 +153,10 @@ public class statusChanger extends HttpServlet {
     }
     
     private void insertTipoItem(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         Connection connection = null;
         String nombreTipo = request.getParameter("nombreTipo");
-        
+
         try {
             Connectorizer connect = new Connectorizer();
             connection = connect.conectar();
@@ -164,7 +169,7 @@ public class statusChanger extends HttpServlet {
             //insertItem(request, response);
             response.sendRedirect(request.getContextPath() + "/admin/registroItem.jsp");
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {
@@ -177,6 +182,7 @@ public class statusChanger extends HttpServlet {
     }
     
     private void deleteRenta(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         Connection connection = null;
         String idRenta = request.getParameter("idRenta");
         String idClient = request.getParameter("idUsr");
@@ -202,7 +208,7 @@ public class statusChanger extends HttpServlet {
             
             response.sendRedirect(request.getContextPath() + "/clientes/misRentas.jsp");
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {
@@ -215,6 +221,7 @@ public class statusChanger extends HttpServlet {
     }
     
     private void updateEstado(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         Connection connection = null;
         String idRenta = request.getParameter("idRenta");
         String cambio = request.getParameter("cambio");
@@ -236,7 +243,7 @@ public class statusChanger extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/admin/rentasAdmin.jsp");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {
@@ -249,6 +256,7 @@ public class statusChanger extends HttpServlet {
     }
     
     private void updateComent(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         Connection connection = null;
         String idRenta = request.getParameter("idRenta");
         String comentario = request.getParameter("comentario");
@@ -266,7 +274,7 @@ public class statusChanger extends HttpServlet {
             
             response.sendRedirect(request.getContextPath() + "/admin/historialAdmin.jsp");
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {

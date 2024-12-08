@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.*;
+import javax.servlet.ServletContext;
 import sourcer.Connectorizer;
 
 /**
@@ -83,7 +84,7 @@ public class clientManager extends HttpServlet {
         }
     }
     
-    private boolean existingName(String username){
+    private boolean existingName(ServletContext context, String username){
         Connection connection = null;
 
         try {
@@ -99,14 +100,16 @@ public class clientManager extends HttpServlet {
             if (resultSet.next()) {
                 return Boolean.parseBoolean(resultSet.getObject(1).toString()) ; 
             }
+        } catch(SQLException sqlex){
+            new Connectorizer().logSQLException(context, sqlex);
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {
                     connection.close(); // Cerrar la conexión
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    new Connectorizer().logException(context, ex);
                 }
             }
         }
@@ -114,18 +117,19 @@ public class clientManager extends HttpServlet {
     }
     
     private void signIn(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         String nombre = request.getParameter("nombre");
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String curp = request.getParameter("curp");
         String password = request.getParameter("password");
-        boolean nameProof = existingName(username);
         
-        if (nameProof){
+        boolean nameExists = existingName(context, username);
+        if (nameExists){
             try {
-                response.sendRedirect("login.html?found=" + String.valueOf(nameProof)); 
+                response.sendRedirect("login.html?side=Sign&found=" + String.valueOf(nameExists)); 
             }catch (Exception e){
-                e.printStackTrace();
+                new Connectorizer().logException(context, e);
             }finally {
                 return;
             }
@@ -147,30 +151,33 @@ public class clientManager extends HttpServlet {
             statement.setString(3, curp);
             statement.setString(4, email);
             statement.setString(5, password);
-            int updCount = statement.executeUpdate();
+            int istCount = statement.executeUpdate();
 
-            if (updCount > 0) {
+            if (istCount > 0) {
                 session.setAttribute("username", username);
                 session.setAttribute("password", password);
                 
                 logIn(request, response);
             } else {
-                response.sendRedirect("notFound.jsp?error=Usuario no encontrado o contraseña incorrecta"); // Redirigir a error
+                response.sendRedirect("failedProccess?severity=done&msj=Registro%20de%20datos%20sin%20efecto"); // Redirigir a error
             }
+        } catch(SQLException sqlex){
+            new Connectorizer().logSQLException(context, sqlex);
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {
                     connection.close(); // Cerrar la conexión
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    new Connectorizer().logException(context, ex);
                 }
             }
         }
     }
 
     private void logIn(HttpServletRequest request, HttpServletResponse response){
+        ServletContext context = request.getServletContext();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -192,12 +199,7 @@ public class clientManager extends HttpServlet {
                 session.setAttribute("userId", idClient);
                 session.setAttribute("username", username);
                 session.setAttribute("password", password);
-                
-                //Cabecera para no guardar 
-                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-                response.setHeader("Pragma", "no-cache");
-                response.setDateHeader("Expires", 0);
-                
+                                
                 // Verificar si el usuario es admin
                 if (idClient.equals("1")) {
                     response.sendRedirect("admin/rentasAdmin.jsp"); // Redirigir a admin
@@ -205,16 +207,18 @@ public class clientManager extends HttpServlet {
                     response.sendRedirect("clientes/misRentas.jsp"); // Redirigir a usuario normal
                 }
             } else {
-                response.sendRedirect("login.html"); // Redirigir a error
+                response.sendRedirect("login.html?side=Log&found=" + String.valueOf(existingName(context, username))); 
             }
+        } catch(SQLException sqlex){
+            new Connectorizer().logSQLException(context, sqlex);
         } catch (Exception e) {
-            e.printStackTrace();
+            new Connectorizer().logException(context, e);
         } finally {
             if (connection != null) {
                 try {
                     connection.close(); // Cerrar la conexión
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    new Connectorizer().logException(context, ex);
                 }
             }
         }

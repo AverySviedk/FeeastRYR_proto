@@ -13,6 +13,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+      <%String userId = String.valueOf(session.getAttribute("userId"));
+        if (userId.equals("null")){
+            response.sendRedirect(request.getContextPath() + "/notFound.jsp");
+        }%>
     </head>
     <body>
         <h1>Mis Rentas</h1>
@@ -23,10 +27,13 @@
             Connection connection = null;
             PreparedStatement statement = null;
             ResultSet resultSet = null;
-            String userId = String.valueOf(session.getAttribute("userId"));
+            //String userId = String.valueOf(session.getAttribute("userId"));
             try {
                 Connectorizer connect = new Connectorizer();
                 connection = connect.conectar();
+                
+                ServletContext context = request.getServletContext();
+                context.log( "User ID: " + userId );
                 
                 String sql = "SELECT idRenta, fecha AS Fecha, hora AS Hora, precio AS Precio, estado AS Estado, " +
                                     "CASE WHEN fecha > CURRENT_DATE() " +
@@ -34,7 +41,7 @@
                                          "ELSE 'expirada' " +
                                     "END AS cancelabilidad FROM renta r  " + 
                                 "WHERE (estado = 'Pendiente' or estado = 'Aceptado') AND r.idCliente = ? " +  
-                                "ORDER r.estado ASC, BY Fecha ASC, Hora ASC";
+                                "ORDER BY r.estado ASC, Fecha ASC, Hora ASC";
                 
                 statement = connection.prepareStatement(sql);
                 statement.setString(1, userId);
@@ -42,7 +49,6 @@
                 boolean barelyResult = resultSet.next();
                 resultSet = statement.executeQuery();
                 
-                ServletContext context = request.getServletContext();
                 context.log("Consulta ejecutada: " + sql + "");                
                 if (resultSet.isBeforeFirst()) {
                     context.log("Se encontraron datos");
@@ -94,5 +100,7 @@
         </table>        
         <br><br><br>
         <input type="button" value="Ver Historial" onclick="window.location.href='<%=request.getContextPath()%>/clientes/miHistorial.jsp'">
+        <br><br><br>
+        <input type="button" value="SignOut" onclick="window.location.href='<%=request.getContextPath()%>/statusChanger?modo=signOut'">
     </body>
 </html>

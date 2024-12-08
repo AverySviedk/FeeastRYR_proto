@@ -16,7 +16,11 @@
       <%String userId = String.valueOf(session.getAttribute("userId"));
         if (!userId.equals("1")){
             response.sendRedirect(request.getContextPath() + "/notFound.jsp");
-        }%>
+        }
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+      %>
     </head>
     <body>
         <h1>Nuevo Artículo</h1>
@@ -43,7 +47,8 @@
                 context.log("No se encontraron datos");
             }
       %>
-      <form name="formItem" method="post" onsubmit="return preventType(event)" action="<%=request.getContextPath()%>/statusChanger?modo=instItem&dimenItem=false">
+      <form name="formItem" method="post" onsubmit="return preventType(event)" autocomplete="off" 
+            action="<%=request.getContextPath()%>/statusChanger?modo=instItem&dimenItem=false">
             <table>
                 <thead>
                     <th colspan="2">Características</th>
@@ -54,7 +59,7 @@
                         <select name="idTipo" onchange="writeType()">
                             <option value="" selected>Selecciona una tipo de item</option>
                           <%while (resultSet.next()) {%>
-                          <option value="<%=String.valueOf(resultSet.getObject(1))%>"><%=resultSet.getObject(2).toString()%></option>
+                            <option name="optTipo" value="<%=String.valueOf(resultSet.getObject(1))%>"><%=resultSet.getObject(2).toString()%></option>
                           <%}%>
                             <option value="nuevoTipo">Nuevo Tipo</option>
                         </select><br>
@@ -148,18 +153,39 @@
                     typeNameContent.required = false;
                 }
             }
+            
             function instType(){
-                window.location.href = "<%=request.getContextPath()%>/statusChanger?modo=instItemType&nombreTipo=" + typeNameContent.value;                                    
+                let optTipo = document.getElementsByName('optTipo');
+                let typeNameContent = document.getElementsByName('nombreTipo')[0];
+                let buttonNewItem = document.getElementsByName('newItem')[0];
+                console.log("estás dentro  > w<");
+                let preventInsertion = false;
+                for (let ops of optTipo){
+                    if (ops.textContent === typeNameContent.value){
+                        preventInsertion = true;
+                        console.log("Done uwU");
+                    }
+                    console.log("Salto U. U");
+                    console.log(ops.textContent);
+                    console.log(typeNameContent.value);
+                }
+                if (preventInsertion){
+                    window.location.href = "<%=request.getContextPath()%>/statusChanger?modo=instItemType&nombreTipo=" + typeNameContent.value;                                    
+                }else{
+                    typeNameContent.value = "";
+                    typeNameContent.placeholder = " -!- Tipo ya registrado.";
+                    buttonNewItem.value = "Reintentar";
+                }
             }
         </script>
         <script>
             function preventType(event){
-               if (typeSelected.value === ""){
-                   event.preventDefault();
-                   return false;
-               }else{
-                   return true;
-               }
+                if (typeSelected.value === ""){
+                    event.preventDefault();
+                    return false;
+                }else{
+                    return true;
+                }
            }
         </script>
       <%

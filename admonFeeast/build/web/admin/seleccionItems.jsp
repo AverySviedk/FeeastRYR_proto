@@ -87,6 +87,6 @@
         </tbody>
         </table>        
         <br><br><br>
-        <input type="button" value="Volver" onclick="window.location.href='<%=request.getContextPath()%>/admin/seleccionItems.jsp'">
+        <input type="button" value="Volver" onclick="window.location.href='<%=request.getContextPath()%>/admin/rentasAdmin.jsp'">
     </body>
 </html>

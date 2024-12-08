@@ -4,6 +4,7 @@
  */
 package sourcer;
 import java.sql.*;
+import javax.servlet.ServletContext;
 /**
  *
  * @author Inspiron 7380
@@ -24,4 +25,45 @@ public class Connectorizer {
         }
         return cnx;
     }
+    
+    public void logException(ServletContext context, Exception e) {
+        context.log("-!- Traza de excepcion: . . . " + e.getMessage());
+
+        for (StackTraceElement element : e.getStackTrace()) {
+            context.log(": - " + element.getLineNumber() +  
+                         " | " + element.getFileName()   + 
+                         " | " + element.getMethodName() + 
+                         " | " + element.getClassName()  + 
+                         "  --  - -   -");
+        }
+        context.log("-!- Excepcion: " + e.getMessage() + "  ----  ---  --  --  -    -    -     -");
+    }
+
+    public void logSQLException(ServletContext context, SQLException sqlEx) {
+        context.log("-!- Traza de excepcion SQL: . . . " + sqlEx.getMessage());
+
+        for (StackTraceElement element : sqlEx.getStackTrace()) {
+            context.log(": - " + element.getLineNumber() +
+                        " | " + element.getFileName() +
+                        " | " + element.getMethodName() +
+                        " | " + element.getClassName() + 
+                        "  --  - -   -");
+        }
+
+        // Manejar excepciones anidadas en la cadena de SQLExceptions
+        SQLException nextException = sqlEx.getNextException();
+        while (nextException != null) {
+            context.log("-- Sub SQLException: " + nextException.getMessage() + 
+                        " -- Codigo -- " + nextException.getErrorCode() + 
+                        " -- Estado: --" + nextException.getSQLState() + "  ---  - -   -   -" );
+            nextException = nextException.getNextException();
+        }
+        
+        context.log("-!- SQLException: " + sqlEx.getMessage() + 
+                    " -- Codigo -- " + sqlEx.getErrorCode() + 
+                    " -- Estado: --" + sqlEx.getSQLState() + "  ----  ---  --  --  -    -    -     -");
+        
+    }
+
+    
 }

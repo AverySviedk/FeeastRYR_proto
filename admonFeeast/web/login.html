@@ -17,11 +17,11 @@
                 <span>Use su nombre de usuario y contraseña</span>
                 <div class="container-input">
                     <ion-icon name="person-outline"></ion-icon>
-                    <input type="text" name="username" placeholder="Nombre de usuario">
+                    <input type="text" name="username" placeholder="Nombre de usuario" required>
                 </div>
                 <div class="container-input">
                     <ion-icon name="lock-closed-outline"></ion-icon>
-                    <input type="password" name="password" placeholder="Contraseña">
+                    <input type="password" name="password" placeholder="Contraseña" required>
                 </div>
                 <a href="#">¿Olvidaste tu contraseña?</a>
                 <button class="button" type="submit">INICIAR SESIÓN</button>
@@ -29,7 +29,7 @@
         </div>
 
         <div class="container-form">
-            <form class="sign-up" action="/admonFeeast/clientManager?modo=signIn" method="POST">
+            <form class="sign-up" name="signForm" action="/admonFeeast/clientManager?modo=signIn" method="POST">
                 <h2>Registrarse</h2>
                 <div class="social-networks">
                     <ion-icon name="logo-google"></ion-icon>
@@ -37,23 +37,23 @@
                 <span>Use su correo electrónico para registrarse</span>
                 <div class="container-input">
                     <ion-icon name="person-outline"></ion-icon>
-                    <input type="text" name="nombre" placeholder="Nombre">
+                    <input type="text" name="nombre" placeholder="Nombre" required>
                 </div>
                 <div class="container-input">
                     <ion-icon name="person-outline"></ion-icon>
-                    <input type="text" name="username" placeholder="Usuario">
+                    <input type="text" name="username" placeholder="Usuario" required>
                 </div>
                 <div class="container-input">
                     <ion-icon name="mail-outline"></ion-icon>
-                    <input type="email" name="email" placeholder="Email">
+                    <input type="email" name="email" placeholder="Email" required>
                 </div>
                 <div class="container-input">
                     <ion-icon name="person-outline"></ion-icon>
-                    <input type="text" name="curp" placeholder="CURP">
+                    <input type="text" name="curp" placeholder="CURP" required>
                 </div>
                 <div class="container-input">
                     <ion-icon name="lock-closed-outline"></ion-icon>
-                    <input type="password" name="password" placeholder="Password">
+                    <input type="password" name="password" placeholder="Password" required>
                 </div>
                 <button class="button">REGISTRARSE</button>
             </form>
@@ -72,6 +72,54 @@
             </div>
         </div>
     </div>
+    <script>
+        const logUser = document.getElementsByName('username')[0];
+        logUser.addEventListener('invalid', (event) => {
+            event.target.setCustomValidity('Ingresa tu nombre.');
+        });
+        logUser.addEventListener('input', (event) => {
+            event.target.setCustomValidity('');
+        });
+        const logPwrd = document.getElementsByName('password')[0];
+        logPwrd.addEventListener('invalid', (event) => {
+            event.target.setCustomValidity('Ingresa tu contraseña');
+        });
+        logPwrd.addEventListener('input', (event) => {
+            event.target.setCustomValidity('');
+        });
+        const singNombre = document.getElementsByName('nombre')[0];
+        singNombre.addEventListener('invalid', (event) => {
+            event.target.setCustomValidity('Dinos tu nombre.');
+        });
+        singNombre.addEventListener('input', (event) => {
+            event.target.setCustomValidity('');
+        });
+        const signUser = document.getElementsByName('username')[1];
+        signUser.addEventListener('invalid', (event) => {
+            event.target.setCustomValidity('Dinos tu apodo.');
+        });
+        signUser.addEventListener('input', (event) => {
+            event.target.setCustomValidity('');
+        });
+        const signEmail = document.getElementsByName('email')[0];
+        signEmail.addEventListener('invalid', (event) => {
+            event.target.setCustomValidity('Formato de mail no reconocido.');
+        });
+        signEmail.addEventListener('input', (event) => {
+            event.target.setCustomValidity('');
+        });
+        const signCurp = document.getElementsByName('curp')[0];
+        const signPwrd = document.getElementsByName('password')[1];
+        const signForm = document.getElementsByName('signForm')[0];
+        signForm.addEventListener('submit', (event) => {
+            if (!/^[A-Z0-9]{18}$/.test(signCurp.value)){
+                event.preventDefault();
+            }
+            if (signPwrd.value.length < 8){
+                event.preventDefault();
+            }
+        });
+    </script>
 
     <script src="script.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>

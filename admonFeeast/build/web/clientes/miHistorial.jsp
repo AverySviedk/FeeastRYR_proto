@@ -13,6 +13,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+      <%String userId = String.valueOf(session.getAttribute("userId"));
+        if (userId.equals("null")){
+            response.sendRedirect(request.getContextPath() + "/notFound.jsp");
+        }%>
     </head>
     <body>
         <h1>Mi Historial</h1>
@@ -23,7 +27,7 @@
             Connection connection = null;
             PreparedStatement statement = null;
             ResultSet resultSet = null;
-            String userId = String.valueOf(session.getAttribute("userId"));
+            //String userId = String.valueOf(session.getAttribute("userId"));
             try {
                 Connectorizer connect = new Connectorizer();
                 connection = connect.conectar();

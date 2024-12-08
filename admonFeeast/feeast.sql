@@ -34,7 +34,7 @@ CREATE TABLE `cliente` (
   `fechaRegistro` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idCliente`),
   UNIQUE KEY `clt_nombre_usuario_UNIQUE` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +43,7 @@ CREATE TABLE `cliente` (
 
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-INSERT INTO `cliente` VALUES (1,'admin','admincato','','admincato@gmail.com','j','2024-12-06 19:02:09'),(2,'shiro','Shiroi Konig','572847284858285928','shirok@gmail.com','s','2024-12-06 19:04:40'),(3,'raziek','Raziek Djevel','666666661111111111','shirok@gmail.com','s','2024-12-06 19:04:40'),(4,'marietta','Malie Decart','777777777777777777','marietd@gmail.com','m','2024-12-06 19:04:40'),(5,'doby','Dobereiner Stanislav','EEE8472848DDDDD9FF','dobys@gmail.com','d','2024-12-06 19:04:40'),(6,'lawliett','Laurel Taylor','IEJFYRHDJFIXKFHDJQ','lavenderc@gmail.com','l','2024-12-07 02:26:22');
+INSERT INTO `cliente` VALUES (1,'admin','admincato','','admincato@gmail.com','j','2024-12-06 19:02:09'),(2,'shiro','Shiroi Konig','572847284858285928','shirok@gmail.com','s','2024-12-06 19:04:40'),(3,'raziek','Raziek Djevel','666666661111111111','shirok@gmail.com','s','2024-12-06 19:04:40'),(4,'marietta','Malie Decart','777777777777777777','marietd@gmail.com','m','2024-12-06 19:04:40'),(5,'doby','Dobereiner Stanislav','EEE8472848DDDDD9FF','dobys@gmail.com','d','2024-12-06 19:04:40'),(6,'lawliett','Laurel Taylor','IEJFYRHDJFIXKFHDJQ','lavenderc@gmail.com','l','2024-12-07 02:26:22'),(8,'harleyk','Harley Alvastar','2374JTGYF6EJ47FU83','hvstar@gmail.com','k','2024-12-07 12:55:19'),(15,'near','Nyarlatoteph','AAAAAAAAAAAAAAAAAA','ntht@gmail.com','N','2024-12-07 13:23:57');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -166,7 +166,7 @@ CREATE TABLE `renta` (
   KEY `fk_Renta_Cliente2_idx` (`idCliente`),
   CONSTRAINT `fk_Renta_Cliente2` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`),
   CONSTRAINT `fk_Renta_Direccion1` FOREIGN KEY (`idDireccion`) REFERENCES `direccion` (`idDireccion`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,7 +175,7 @@ CREATE TABLE `renta` (
 
 LOCK TABLES `renta` WRITE;
 /*!40000 ALTER TABLE `renta` DISABLE KEYS */;
-INSERT INTO `renta` VALUES (4,'2024-12-06','19:13:42',120,NULL,'Rechazado','veauvoir',12,4),(5,'2024-12-06','19:15:01',231,NULL,'Rechazado','dakaraimasu',14,2),(7,'2024-12-06','22:27:19',421,NULL,'Pendiente',NULL,13,3),(8,'2024-12-06','22:57:37',421,NULL,'Rechazado','',13,3),(9,'2024-12-07','08:00:00',423,NULL,'Terminado',NULL,13,3),(11,'2024-12-06','08:00:00',222,NULL,'Rechazado','lycantrope',15,5),(12,'2024-12-06','09:01:00',211,NULL,'Pendiente',NULL,13,5);
+INSERT INTO `renta` VALUES (4,'2024-12-06','19:13:42',120,NULL,'Rechazado','veauvoir',12,4),(5,'2024-12-06','19:15:01',231,NULL,'Rechazado','dakaraimasu',14,2),(7,'2024-12-06','22:27:19',421,77,'Aceptado',NULL,13,3),(8,'2024-12-06','22:57:37',421,NULL,'Rechazado','',13,3),(9,'2024-12-07','08:00:00',423,NULL,'Terminado',NULL,13,3),(11,'2024-12-06','08:00:00',222,NULL,'Pendiente',NULL,15,5),(12,'2024-12-06','09:01:00',211,NULL,'Pendiente',NULL,13,5),(14,'2024-12-07','11:00:00',23,234,'Pendiente',NULL,11,5),(15,'2024-12-08','11:00:00',23,234,'Rechazado','Muy Lejano',11,5),(16,'2024-12-08','12:00:00',23,234,'Pendiente',NULL,11,5);
 /*!40000 ALTER TABLE `renta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -269,4 +269,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-07 11:01:07
+-- Dump completed on 2024-12-07 16:54:15
