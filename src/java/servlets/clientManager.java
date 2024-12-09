@@ -129,7 +129,7 @@ public class clientManager extends HttpServlet {
         
         try {
              if (existingName(context, username)){   
-                response.sendRedirect("login.html?side=Sign&errMsj=Usuario%20preexistente");
+                response.sendRedirect(request.getContextPath() + "/login.jsp?side=Sign&errMsj=Usuario%20preexistente");
             }
              
             Connectorizer connect = new Connectorizer();
@@ -200,10 +200,14 @@ public class clientManager extends HttpServlet {
                     response.sendRedirect(request.getContextPath() +  "/clientes/misRentas.jsp"); // Redirigir a usuario normal
                 }
             } else {
+                String[] dataSet = new String[2];
+                dataSet[0] = username;
+                dataSet[1] = password;
+                session.setAttribute("logData", dataSet);
                 if (existingName(context, username)){
-                    response.sendRedirect(request.getContextPath() + "/login.html?side=Log&errMsj=Contrasena%20incorrecta");
+                    response.sendRedirect(request.getContextPath() + "/login.jsp?side=Log&errMsj=Contrasena%20incorrecta");
                 }else {
-                    response.sendRedirect(request.getContextPath() + "/login.html?side=Log&errMsj=Usuario%20inexistente");
+                    response.sendRedirect(request.getContextPath() + "/login.jsp?side=Log&errMsj=Usuario%20inexistente");
                 }
             }
         } catch(SQLException sqlex){

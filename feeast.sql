@@ -34,7 +34,7 @@ CREATE TABLE `cliente` (
   `fechaRegistro` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idCliente`),
   UNIQUE KEY `clt_nombre_usuario_UNIQUE` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,8 +43,35 @@ CREATE TABLE `cliente` (
 
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-INSERT INTO `cliente` VALUES (1,'admin','admincato','','admincato@gmail.com','j','2024-12-06 19:02:09'),(2,'shiro','Shiroi Konig','572847284858285928','shirok@gmail.com','s','2024-12-06 19:04:40'),(3,'raziek','Raziek Djevel','666666661111111111','shirok@gmail.com','s','2024-12-06 19:04:40'),(4,'marietta','Malie Decart','777777777777777777','marietd@gmail.com','m','2024-12-06 19:04:40'),(5,'doby','Dobereiner Stanislav','EEE8472848DDDDD9FF','dobys@gmail.com','d','2024-12-06 19:04:40'),(6,'lawliett','Laurel Taylor','IEJFYRHDJFIXKFHDJQ','lavenderc@gmail.com','l','2024-12-07 02:26:22'),(8,'harleyk','Harley Alvastar','2374JTGYF6EJ47FU83','hvstar@gmail.com','k','2024-12-07 12:55:19'),(15,'near','Nyarlatoteph','AAAAAAAAAAAAAAAAAA','ntht@gmail.com','N','2024-12-07 13:23:57');
+INSERT INTO `cliente` VALUES (1,'admin','admincato','','admincato@gmail.com','j','2024-12-06 19:02:09'),(2,'shiro','Shiroi Konig','572847284858285928','shirok@gmail.com','s','2024-12-06 19:04:40'),(3,'raziek','Raziek Djevel','666666661111111111','shirok@gmail.com','s','2024-12-06 19:04:40'),(4,'marietta','Malie Decart','777777777777777777','marietd@gmail.com','m','2024-12-06 19:04:40'),(5,'doby','Dobereiner Stanislav','EEE8472848DDDDD9FF','dobys@gmail.com','d','2024-12-06 19:04:40'),(6,'lawliett','Laurel Taylor','IEJFYRHDJFIXKFHDJQ','lavenderc@gmail.com','l','2024-12-07 02:26:22'),(8,'harleyk','Harley Alvastar','2374JTGYF6EJ47FU83','hvstar@gmail.com','k','2024-12-07 12:55:19'),(15,'near','Nyarlatoteph','AAAAAAAAAAAAAAAAAA','ntht@gmail.com','N','2024-12-07 13:23:57'),(16,'','','','','','2024-12-08 03:28:46');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dir_cliente`
+--
+
+DROP TABLE IF EXISTS `dir_cliente`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dir_cliente` (
+  `idCliente` int NOT NULL,
+  `idDireccion` int NOT NULL,
+  PRIMARY KEY (`idCliente`,`idDireccion`),
+  KEY `idDireccion` (`idDireccion`),
+  CONSTRAINT `dir_cliente_ibfk_1` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`),
+  CONSTRAINT `dir_cliente_ibfk_2` FOREIGN KEY (`idDireccion`) REFERENCES `direccion` (`idDireccion`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dir_cliente`
+--
+
+LOCK TABLES `dir_cliente` WRITE;
+/*!40000 ALTER TABLE `dir_cliente` DISABLE KEYS */;
+INSERT INTO `dir_cliente` VALUES (1,11),(4,12),(2,13),(2,14),(3,15),(2,17),(2,20),(2,21);
+/*!40000 ALTER TABLE `dir_cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -60,11 +87,8 @@ CREATE TABLE `direccion` (
   `ciudad` varchar(200) DEFAULT NULL,
   `estado` varchar(100) DEFAULT NULL,
   `codigoPostal` char(5) DEFAULT NULL,
-  `idCliente` int NOT NULL,
-  PRIMARY KEY (`idDireccion`),
-  KEY `fk_Direccion_Cliente1_idx` (`idCliente`),
-  CONSTRAINT `fk_Direccion_Cliente1` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3;
+  PRIMARY KEY (`idDireccion`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,7 +97,7 @@ CREATE TABLE `direccion` (
 
 LOCK TABLES `direccion` WRITE;
 /*!40000 ALTER TABLE `direccion` DISABLE KEYS */;
-INSERT INTO `direccion` VALUES (11,'Agrupamiento J # 40','Ciudad de México','CDMX','07980',1),(12,'47B','Ciudad de México','CDMX','48592',4),(13,'E33','Nezahualcoyotl','EdoMex','48573',2),(14,'2','Naucalpan','EdoMex','42473',2),(15,'25','Ecatepec','EdoMex','22455',3);
+INSERT INTO `direccion` VALUES (11,'Agrupamiento J # 40','Ciudad de México','CDMX','07980'),(12,'47B','Ciudad de México','CDMX','48592'),(13,'E33','Nezahualcoyotl','EdoMex','48573'),(14,'2','Naucalpan','EdoMex','42473'),(15,'25','Ecatepec','EdoMex','22455'),(17,'lorem','Ipsum','exampli','13232'),(18,'Linares 74. Sta Maria la Rivera','Ciudad de México','CDMX','26374'),(19,'Jacobino 17  Col Narvarte','Ciudad de México','CDMX','28475'),(20,'Hamburgo 117  Col. Juarez','Ciudad de México','CDMX','06600'),(21,'Maria Magdalena 12,, Coyoacan','Ciudad de México','CDMX','23453');
 /*!40000 ALTER TABLE `direccion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,7 +121,7 @@ CREATE TABLE `item` (
   PRIMARY KEY (`idItem`),
   KEY `fk_Item_Tipo_item1_idx` (`idTipo`),
   CONSTRAINT `fk_Item_Tipo_item1` FOREIGN KEY (`idTipo`) REFERENCES `tipoitem` (`idTipoItem`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -106,7 +130,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,'silla negra plegable',35,150,35,12,22,30,1),(2,'silla blanca no plegable',35,120,40,10,30,30,1),(5,'Sonidero',NULL,NULL,NULL,7877,7,7,6),(7,'lamina',78,78,7,8,9,8,8);
+INSERT INTO `item` VALUES (1,'silla negra plegable',35,150,35,12,22,30,1),(2,'silla blanca no plegable',35,120,40,10,30,30,1),(5,'Sonidero',NULL,NULL,NULL,7877,7,7,6),(7,'lamina',78,78,7,8,9,8,8),(9,'vaso transparente fluor',NULL,NULL,NULL,3,700,1400,4),(10,'gorrito cono papel',NULL,NULL,NULL,6,70,70,11),(11,'azul mate con rayas blancas',NULL,NULL,NULL,20,15,20,2);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -215,8 +239,9 @@ DROP TABLE IF EXISTS `tipo_item_renta`;
 CREATE TABLE `tipo_item_renta` (
   `idTipoItemRenta` int NOT NULL AUTO_INCREMENT,
   `tipo` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`idTipoItemRenta`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  PRIMARY KEY (`idTipoItemRenta`),
+  UNIQUE KEY `unique_tipo` (`tipo`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -225,6 +250,7 @@ CREATE TABLE `tipo_item_renta` (
 
 LOCK TABLES `tipo_item_renta` WRITE;
 /*!40000 ALTER TABLE `tipo_item_renta` DISABLE KEYS */;
+INSERT INTO `tipo_item_renta` VALUES (2,'Compensacion'),(1,'Renta');
 /*!40000 ALTER TABLE `tipo_item_renta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -237,9 +263,10 @@ DROP TABLE IF EXISTS `tipoitem`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tipoitem` (
   `idTipoItem` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`idTipoItem`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
+  `nombre` varchar(45) NOT NULL,
+  PRIMARY KEY (`idTipoItem`),
+  UNIQUE KEY `uniqNombreTipo` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -248,7 +275,7 @@ CREATE TABLE `tipoitem` (
 
 LOCK TABLES `tipoitem` WRITE;
 /*!40000 ALTER TABLE `tipoitem` DISABLE KEYS */;
-INSERT INTO `tipoitem` VALUES (1,'silla'),(2,'mantel'),(3,'mesa'),(4,'vaso'),(5,'inflable'),(6,'sonido'),(7,'juego'),(8,'lonas'),(9,'alimento');
+INSERT INTO `tipoitem` VALUES (11,'accesorios'),(9,'alimento'),(5,'inflable'),(7,'juego'),(8,'lonas'),(15,'luces'),(2,'mantel'),(3,'mesa'),(1,'silla'),(6,'sonido'),(4,'vaso');
 /*!40000 ALTER TABLE `tipoitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -269,4 +296,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-07 16:54:15
+-- Dump completed on 2024-12-08 17:36:29
