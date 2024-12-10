@@ -7,14 +7,19 @@ package servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import javax.servlet.ServletException;
 //import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+import org.apache.coyote.RequestGroupInfo;
 import sourcer.Connectorizer;
 /**
  *
@@ -272,6 +277,15 @@ public class statusChanger extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/admin/registroItem.jsp");
         } catch (Exception e) {
             new Connectorizer().logException(context, e);
+            try {
+               // HttpSession session = request.getSession(false);
+                String referer = request.getHeader("Referer");
+                response.sendRedirect(request.getContextPath() + "/sliding.jsp?prevPage=" + 
+                                      URLEncoder.encode(referer, StandardCharsets.UTF_8.toString()) );
+            } catch (IOException ex) {
+                context.log("== EXCEPCIÓN SECUNDARIA ======================================");
+                new Connectorizer().logException(context, ex);            
+            }
         } finally {
             if (connection != null) {
                 try {

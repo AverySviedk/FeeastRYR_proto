@@ -169,7 +169,7 @@
                     console.log(ops.textContent);
                     console.log(typeNameContent.value);
                 }
-                if (preventInsertion){
+                if (preventInsertion){  //ESTO ESTÁ AL REVÉS A PROÓSITO PARA PROBAR EL TRTAMEINTO DE ERRORES
                     window.location.href = "<%=request.getContextPath()%>/statusChanger?modo=instItemType&nombreTipo=" + typeNameContent.value;                                    
                 }else{
                     typeNameContent.value = "";
