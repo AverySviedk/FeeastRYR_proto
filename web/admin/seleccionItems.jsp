@@ -20,7 +20,7 @@
     </head>
     <body>
         <h1>Articulos Disponibles</h1>
-        <table>
+        <table style="text-align: center">
         <thead>
             <tr>
         <%
@@ -57,7 +57,7 @@
                 if (barelyResult){
                     for (int i = 2; i <= columnCount; i++) {
                         String columnName = metaData.getColumnLabel(i);%>
-                        <th><%= columnName %></th>
+                        <th style="text-align: right"><%= columnName %></th>
               <%   }
                 }else{%>
                     <th>No tienes items registrados.</th>
@@ -75,8 +75,22 @@
                             <input type="button" value="Borrar" 
                                    onclick="window.location.href='<%=request.getContextPath()%>/statusChanger?modo=delItem&idItem=<%=idItem%>'">
                         </td>
-                    </tr>
-            <%  }
+                        <td>
+                            <input type="button" value="Cambiar cantidades" name="showConfAm<%=idItem%>" 
+                                   onclick="writeIte(<%=idItem%>);">
+                        </td>
+                        <td>
+                            <input style="width: 150px;" type="number" name="dispo<%=idItem%>" value="<%=resultSet.getObject("Disponible")%>" 
+                                   placeholed="disponible" min="0" hidden/>
+                            <input style="width: 150px;" type="number" name="total<%=idItem%>" value="<%=resultSet.getObject("Total")%>" 
+                                   placeholed="total" min="0" hidden/>
+                        </td>
+                        <td>
+                            <input type="button" value="Aceptar!" name="submitDat<%=idItem%>" 
+                                   onclick="doModifyTem(<%=idItem%>);" hidden/>
+                        </td>
+                    </tr>                    
+            <%  } //FIN WHILE
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -85,7 +99,52 @@
                 if (connection != null) try { connection.close(); } catch (SQLException ignore) {}
             } %>
         </tbody>
-        </table>        
+        </table>     
+        
+        
+
+        <script>
+            function doModifyTem(idTem){
+                let dispo = document.getElementsByName('dispo' + idTem)[0].value;
+                let total = document.getElementsByName('total' + idTem)[0].value;
+
+                console.log(dispo);
+                console.log(total);
+                if (dispo === "" || total === ""){
+                    console.log("N inválidos");
+                    return;
+                }
+                
+                window.location.href = "<%=request.getContextPath()%>/statusChanger?"
+                                            + "modo=updItem" 
+                                            + "&idItem=" + idTem
+                                            + "&dispoItem=" + dispo
+                                            + "&totalItem=" + total;
+                                    
+                //console.log(u);
+            }
+
+            function writeIte(idItem){
+                let buttonUpDat = document.getElementsByName('submitDat' + idItem)[0];
+                let buttonMorph = document.getElementsByName('showConfAm' + idItem)[0];
+                let itemDisp = document.getElementsByName('dispo' + idItem)[0];
+                let itemTotl = document.getElementsByName('total' + idItem)[0];
+                
+                buttonUpDat.hidden = !buttonUpDat.hidden;
+                itemDisp.hidden = !itemDisp.hidden;
+                itemTotl.hidden = !itemTotl.hidden;
+                
+                if (buttonMorph.value === "Cambiar cantidades"){
+                    buttonMorph.value = "Cancelar";
+                }else{
+                    buttonMorph.value = "Cambiar cantidades";
+                }
+            }
+        </script>
+
+        
+        
+        
         <br><br><br>
         <input type="button" value="Volver" onclick="window.location.href='<%=request.getContextPath()%>/admin/rentasAdmin.jsp'">
     </body>

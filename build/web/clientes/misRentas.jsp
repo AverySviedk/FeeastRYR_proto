@@ -78,7 +78,7 @@
                             <td><%= (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - " %></td>
                     <%  } %>
                         <td>
-                            <a href="/detallesRenta.jsp?idRenta=<%=idRenta%>">Ver Detalles</a>
+                            <a href="<%=request.getContextPath()%>/admin/detallesRenta.jsp?idRenta=<%=idRenta%>">Ver Detalles</a>
                         </td>
                       <%if (cancelailidad.equals("cancelable")){%>
                         <td>
