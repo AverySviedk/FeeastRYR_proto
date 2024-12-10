@@ -78,10 +78,10 @@
                     String idRenta = resultSet.getObject(1).toString();%>
                     <tr>
                     <%  for (int i = 2; i <= columnCount; i++) { %>
-                            <td><%= (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - " %></td>
+                            <td style="max-width: 400px; height: 30px;" ><%= (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - " %></td>
                     <%  } %>
                         <td>
-                            <a href="/detallesRenta.jsp?idRenta=<%=idRenta%>">Ver Detalles</a>
+                            <a href="<%=request.getContextPath()%>/admin/detallesRenta.jsp?idRenta=<%=idRenta%>">Ver Detalles</a>
                         </td>
                         <td>
                     <%  if (resultSet.getObject(columnCount).equals("Pendiente")){%>

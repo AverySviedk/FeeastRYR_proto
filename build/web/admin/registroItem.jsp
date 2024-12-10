@@ -76,15 +76,15 @@
                 </tr>
                 <tr name="itemDim" hidden>
                     <th><label for="alto">Ancho</label></th>
-                    <th><input type="number" name="ancho" ></th>
+                    <th><input type="number" min="0" name="ancho" hidden ></th>
                 </tr>
                 <tr name="itemDim" hidden>
                     <th><label for="alto">Alto</label></th>
-                    <th><input type="number" name="alto" ></th>
+                    <th><input type="number" min="0" name="alto" hidden ></th>
                 </tr>
                 <tr name="itemDim" hidden>
                     <th><label for="largo">Largo</label></th>
-                    <th><input type="number" name="largo" ></th>
+                    <th><input type="number" min="0" name="largo" hidden ></th>
                 </tr>
                     <script>
                         let showButtonDim = document.getElementsByName('showDim')[0];
@@ -98,11 +98,10 @@
                             if (showButtonDim.value === "Incluír dimensiones"){
                                 for (let dimx of itemDimens){
                                     dimx.hidden = false;
-                                    console.log("uwu");
+                                    //console.log("uwu");
                                 }
-                                ancho.required = true;
-                                alto.required = true;
-                                largo.required = true;
+                                ancho.hidden = alto.hidden = largo.hidden = false;
+                                ancho.required = alto.required = largo.required = true;
                                 showButtonDim.value = "Ocultar dimensiones";
                                 itemForm.action = "<%=request.getContextPath()%>/statusChanger?modo=instItem&dimenItem=true";
                             }else if (showButtonDim.value === "Ocultar dimensiones"){
@@ -118,15 +117,15 @@
                     </script>
                 <tr>
                     <th><label for="precio">Precio</label></th>
-                    <th><input type="number" name="precio" required></th>
+                    <th><input type="number" min="0" name="precio" required></th>
                 </tr>
                 <tr>
                     <th><label for="cantidadDisponible">Unidades disponibles </label></th>
-                    <th><input type="number" name="cantidadDisponible" required></th>
+                    <th><input type="number" min="0" name="cantidadDisponible" required></th>
                 </tr>
                 <tr>
                     <th><label for="cantidadTotal">Unidades totales</label></th>
-                    <th><input type="number" name="cantidadTotal" required></th>
+                    <th><input type="number" min="0" name="cantidadTotal" required></th>
                 </tr>
                 <tfoot>
                     <tr>
@@ -137,7 +136,7 @@
                 </tfoot>
             </table>
         </form>
-        <script>
+        <script>            
             let typeSelected = document.getElementsByName('idTipo')[0];
             let typeNameContent = document.getElementsByName('nombreTipo')[0];
             let buttonItemType = document.getElementsByName('newItem')[0];
@@ -158,18 +157,18 @@
                 let optTipo = document.getElementsByName('optTipo');
                 let typeNameContent = document.getElementsByName('nombreTipo')[0];
                 let buttonNewItem = document.getElementsByName('newItem')[0];
-                console.log("estás dentro  > w<");
+                //console.log("estás dentro  > w<");
                 let preventInsertion = false;
                 for (let ops of optTipo){
                     if (ops.textContent === typeNameContent.value){
                         preventInsertion = true;
-                        console.log("Done uwU");
+                        //console.log("Done uwU");
                     }
-                    console.log("Salto U. U");
+                    //console.log("Salto U. U");
                     console.log(ops.textContent);
                     console.log(typeNameContent.value);
                 }
-                if (preventInsertion){
+                if (!preventInsertion){  //--Recuperado-- ESTO ESTÁ AL REVÉS A PROÓSITO PARA PROBAR EL TRTAMEINTO DE ERRORES
                     window.location.href = "<%=request.getContextPath()%>/statusChanger?modo=instItemType&nombreTipo=" + typeNameContent.value;                                    
                 }else{
                     typeNameContent.value = "";
@@ -177,8 +176,7 @@
                     buttonNewItem.value = "Reintentar";
                 }
             }
-        </script>
-        <script>
+            
             function preventType(event){
                 if (typeSelected.value === ""){
                     event.preventDefault();

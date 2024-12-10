@@ -77,37 +77,38 @@
             </tr>
         </thead>
         <tbody> <!-- Aquí se agregarán las filas dinámicamente -->
-            <%  while (resultSet.next()) { %>
+             <% while (resultSet.next()) { 
+                  String idRenta = resultSet.getObject(1).toString();%>
                     <tr>
-                    <%  for (int i = 2; i <= columnCount; i++) { %>
+                     <% for (int i = 2; i <= columnCount; i++) { %>
                           <%String stringContent = (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - ";
                             if (metaData.getColumnName(i).toString().equals("comentario") 
                                 && stringContent.length() > 28) { %>
-                            <td><%= stringContent.substring(0, 25) + "..." %></td>
+                               <td><%= stringContent.substring(0, 25) + "..." %></td>
                           <%} else {%>
-                            <td><%= stringContent %></td>
+                               <td style="max-width: 400px; height: 30px;" ><%= stringContent %></td>
                           <%}%>
 
-                          <%if (metaData.getColumnName(i).toString().equals("comentario")
+                         <% if (metaData.getColumnName(i).toString().equals("comentario")
                                 && resultSet.getObject(1).toString().equals(rentaPorJustificar)){%>
                             <td>
                                 <textarea rows="2" cols="40" maxlength="80" name="comentario" placeholder="Justifica el rechazo"></textarea>
                                 <br><input type="button" value="Enviar!" name="sendComment" 
                                        onclick="subirComentario()"/>
-                                <a href="/detallesRenta.jsp?idRenta">Ver Detalles</a>
-                                <script>
-                                    function subirComentario(){
-                                        let comentario = document.getElementsByName('comentario')[0].value;
-                                        window.location.href = "<%=request.getContextPath()%>/statusChanger?modo=updComt&idRenta=<%=rentaPorJustificar%>&comentario=" + comentario;
-                                    }
-                                </script>
+                                <a href="<%=request.getContextPath()%>/admin/detallesRenta.jsp?idRenta=<%=idRenta%>">Ver Detalles</a>
                             </td>
-                          <%}%>
-                    <%  } %>
+                            <script>
+                                function subirComentario(){
+                                    let comentario = document.getElementsByName('comentario')[0].value;
+                                    window.location.href = "<%=request.getContextPath()%>/statusChanger?modo=updComt&idRenta=<%=rentaPorJustificar%>&comentario=" + comentario;
+                                }
+                            </script>
+                         <% }%>
+                     <% } %>
                         
-                      <%if (!resultSet.getObject(1).toString().equals(rentaPorJustificar)){%>
+                     <% if (!resultSet.getObject(1).toString().equals(rentaPorJustificar)){%>
                         <td>
-                            <a href="/detallesRenta.jsp?idRenta">Ver Detalles</a>
+                            <a href="<%=request.getContextPath()%>/admin/detallesRenta.jsp?idRenta=<%=idRenta%>">Ver Detalles</a>
                         </td>
                       <%}%>
                         <td><%=resultSet.getObject(1)%><%=rentaPorJustificar%></td>

@@ -69,7 +69,7 @@
                     String idItem = resultSet.getObject(1).toString();%>
                     <tr>
                     <%  for (int i = 2; i <= columnCount; i++) { %>
-                            <td><%= (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - " %></td>
+                          <td align="center"><%= (resultSet.getObject(i) != null) ? resultSet.getObject(i).toString() : " - " %></td>
                     <%  } %>
                         <td>
                             <input type="button" value="Borrar" 

@@ -41,16 +41,10 @@
                                         "WHERE dc.idCliente = ? ";
                 statement = connection.prepareStatement(sql);
                 statement.setString(1, userId);
-                ResultSet rs = statement.executeQuery();
+                //ResultSet rs = statement.executeQuery();
                 resultSet = statement.executeQuery();
         %>
-        <div class="container">
-            <header class="hero">
-                <h25>Para continuar, <strong><%=String.valueOf(session.getAttribute("username"))%></strong>!</h25>
-                <br>
-            </header>
-        </div>
-        <form action="rentas.jsp" method="POST" name="formDirDate">
+        <form action="<%=request.getContextPath()%>/clientes/realizarRenta.jsp" method="POST" name="formDirDate">
             <label for="opcionesDireccion">Selecciona tu dirección</label>
             <select name="opcionesDireccion" onchange="writeDir()">
                 <option value="" selected>Selecciona una direccion</option>
@@ -66,7 +60,7 @@
             
             <input type="button" name="newDirec" value="Nueva Dirección" onclick="instCustomDir()" hidden>
 
-            <script>
+            <script>  //INST CUSTOM DIR
                 let dirSelected = document.getElementsByName('opcionesDireccion')[0];
                 let dirDirecx = document.getElementsByName('direccion')[0];
                 let dirCiudad = document.getElementsByName('ciudad')[0];
@@ -110,9 +104,9 @@
                     let isAlready = dirDirecx.value + ", " +  dirCiudad.value + ", " + dirEstado.value + "  C.P:" + dirPostal.value;
                     console.log(isAlready);
                     
-                    let buttonNewItem = document.getElementsByName('newItem')[0];
+                    ///let buttonNewItem = document.getElementsByName('newItem')[0];
                     
-                    console.log("estás dentro  > w<");
+                    //console.log("estás dentro  > w<");
                     let coinciDir = false;
                     for (let ops of optDir){
                         if (ops.textContent === isAlready){
@@ -132,7 +126,11 @@
                         buttonCustomDirec.value = "Mal CP- Reintentar";
                         return;
                     }
-                    if (!coinciDir){
+                    if (dirEstado === "" || dirCiudad === "" || dirDirecx === "" || dirPostal){
+                        buttonCustomDirec.value = "Falta Info- Reintentar";
+                        return;
+                    }
+                    if (!coinciDir){ //(false){ //
                         console.log("Envviando formulario :3");
                         window.location.href = "<%=request.getContextPath()%>/statusChanger?" +  
                                                 "modo=instCustDir" + 
@@ -155,41 +153,30 @@
                 }
             </script>
             
-                       
-            
             <br>
             <label for="fechaPedido">Selecciona la fecha del evento</label>
-            <input type="date" name="fechaPedido" id="fechaPedido" onchange="validarFecha()" required>
+            <input type="datetime-local" name="fechaPedido" id="fechaPedido" onchange="validarFecha()" required>
             
             <div class="boton-enviar">    
                 <button type="submit" name="submitDirDate" id="botonEnviar">Enviar</button>
             </div>
             
             <script>
-                function validarFecha() {
+                function validarFecha (){
                     let gotFecha = document.getElementById("fechaPedido");
                     let curDate = new Date();
                     let compDate = new Date(gotFecha.value);
-                    let curDay = curDate.getDate();
-                    let compDay = compDate.getUTCDate();
-                    let curMonth = curDate.getMonth();
-                    let compMonth = compDate.getMonth();
-                    let curYear = curDate.getFullYear();
-                    let compYear = compDate.getFullYear();
 
                     let selectDate = document.getElementsByName("submitDirDate")[0];
-                    if (compYear < curYear) {
-                        selectDate.disabled = true;
-                    } else if (compMonth < curMonth) {
-                        selectDate.disabled = true;
-                    } else if (compDay <= curDay) {
-                        selectDate.disabled = true;
+
+                    // Compara directamente las fechas
+                    if (compDate <= curDate) {
+                        selectDate.disabled = true; // Fecha anterior o igual al día de hoy
                     } else {
-                        selectDate.disabled = false;
+                        selectDate.disabled = false; // Fecha válida (posterior a hoy)
                     }
                 }
             </script>
-            
             
         </form>
         <script>
@@ -197,8 +184,11 @@
             const dirDateForm = document.getElementsByName('formDirDate')[0];
 
             dirDateForm.addEventListener('submit', (event) => {
-                if (!/^[0-9]{5}$/.test(cdPost.value)){
+                if (cdPost.hidden === false && /^[0-9]{5}$/.test(cdPost.value)){
                     event.preventDefault();
+                    console.log("Entraste > w<");
+                }else{
+                    console.log("Nopi unu");
                 }
             });
         </script>
